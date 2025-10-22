@@ -3,9 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.database import create_tables, seed_demo_data
-from app.routers import disasters, camps, donations, volunteers, coordinators, resource_requests, auth, statistics
+from app.routers import (
+    notifications,
+    disasters,
+    camps,
+    donations,
+    volunteers,
+    coordinators,
+    resource_requests,
+    auth,
+    statistics
+)
 
-
+# Lifespan for startup/shutdown
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
@@ -15,7 +25,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     pass
 
-
+# Create FastAPI instance
 app = FastAPI(
     title="Disaster Management System API",
     description="API for managing disasters, relief camps, donations, and volunteers",
@@ -41,13 +51,14 @@ app.include_router(donations.router, prefix="/api", tags=["donations"])
 app.include_router(volunteers.router, prefix="/api", tags=["volunteers"])
 app.include_router(coordinators.router, prefix="/api", tags=["coordinators"])
 app.include_router(resource_requests.router, prefix="/api", tags=["resource-requests"])
+app.include_router(notifications.router, prefix="/api", tags=["notifications"])  # <-- move here
 
-
+# Root endpoint
 @app.get("/")
 async def root():
     return {"message": "Disaster Management System API", "version": "1.0.0"}
 
-
+# Health check
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
