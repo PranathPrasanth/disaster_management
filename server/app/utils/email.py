@@ -31,3 +31,27 @@ def send_email(to_email: str, subject: str, template_name: str, context: dict):
 
 def send_email_background(background_tasks: BackgroundTasks, to_email: str, subject: str, template_name: str, context: dict):
     background_tasks.add_task(send_email, to_email, subject, template_name, context)
+
+def send_volunteer_notification(to_email: str, context: dict):
+    send_email(
+        to_email,
+        subject="Volunteer Notification",
+        template_name="volunteer_notification.html",
+        context=context
+    )
+
+def send_donor_confirmation(to_email: str, context: dict):
+    send_email(
+        to_email,
+        subject="Donation Confirmation",
+        template_name="donor_confirmation.html",
+        context=context
+    )
+
+def send_admin_alert(to_email: str, context: dict):
+    send_email(
+        to_email,
+        subject="Admin Alert: New Update",
+        template_name="admin_alert.html",
+        context=context
+    )

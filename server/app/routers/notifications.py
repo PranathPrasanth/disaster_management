@@ -1,6 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
-from server.app.utils.email import send_volunteer_notification, send_donor_confirmation, send_admin_alert
+from app.utils.email import send_volunteer_notification, send_donor_confirmation, send_admin_alert
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
