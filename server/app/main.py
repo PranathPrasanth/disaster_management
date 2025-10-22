@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.database import create_tables, seed_demo_data
-from app.routers import (
+from .database import create_tables, seed_demo_data
+from .routers import (
     notifications,
     disasters,
     camps,
