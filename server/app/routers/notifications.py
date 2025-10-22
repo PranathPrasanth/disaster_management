@@ -3,12 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import contextmanager
 
 # ----------------------------------------------------------------------
-# THE FIX: Using '..' to go up one level (from 'routers' to 'app')
-# and then down into the sibling directories ('utils', 'schemas', 'database').
+# THE FIX: Importing schema definitions directly from the sibling file.
+# Since schemas.py is a FILE, we import the specific classes/definitions 
+# directly from the module.
 # ----------------------------------------------------------------------
-from ..database import get_db # Assuming get_db function is in the sibling database module
-from ..schemas.notifications import NotificationCreate, NotificationRead # Import specific schema classes
-from ..utils.email import send_volunteer_notification, send_donor_confirmation, send_admin_alert
+from ..database import get_db # Correct relative import for database.py
+from ..utils.email import send_volunteer_notification, send_donor_confirmation, send_admin_alert # Correct relative import for utils/email.py
+from ..schemas import NotificationCreate, NotificationRead # <-- *** CRITICAL CHANGE ***
 
 # Placeholder for models
 class NotificationModel:
@@ -21,10 +22,6 @@ def get_notification_by_id(db: AsyncSession, id: int):
     """Placeholder function."""
     return NotificationModel(id=id, message="Test Notification")
 
-def get_all_notifications(db: AsyncSession):
-    """Placeholder function."""
-    return [NotificationModel(id=1, message="N1"), NotificationModel(id=2, message="N2")]
-
 # ----------------------------------------------------------------------
 # ROUTER CODE
 # ----------------------------------------------------------------------
@@ -33,15 +30,13 @@ router = APIRouter()
 
 @router.post("/notifications", status_code=status.HTTP_201_CREATED)
 async def create_new_notification(
-    notification_data: notifications_schema.NotificationCreate,
+    # NOTE: Since we imported the class directly, we use the class name
+    notification_data: NotificationCreate, 
     db: AsyncSession = Depends(get_db)
 ):
     """
     Creates a new notification and sends an email alert (if applicable).
     """
-    # Example usage of the fixed import:
-    # In a real app, this logic would check the notification type
-    # and call the appropriate email function.
     try:
         if "volunteer" in notification_data.message.lower():
             send_volunteer_notification(
@@ -56,13 +51,12 @@ async def create_new_notification(
                 body=notification_data.message
             )
     except Exception as e:
-        # Log the error, but don't stop the main process
         print(f"Email failed to send: {e}")
 
     # Logic to save notification to database would go here
     return {"message": "Notification created and processed successfully", "id": 1}
 
-@router.get("/notifications/{notification_id}", response_model=notifications_schema.NotificationRead)
+@router.get("/notifications/{notification_id}", response_model=NotificationRead) # NOTE: Using the class name
 async def read_notification(notification_id: int, db: AsyncSession = Depends(get_db)):
     """
     Retrieves a specific notification by ID.
