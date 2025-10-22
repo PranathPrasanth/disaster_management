@@ -7,7 +7,7 @@ from contextlib import contextmanager
 # and then down into the sibling directories ('utils', 'schemas', 'database').
 # ----------------------------------------------------------------------
 from ..database import get_db # Assuming get_db function is in the sibling database module
-from ..schemas import notifications as notifications_schema # Assuming schemas/notifications.py exists
+from ..schemas.notifications import NotificationCreate, NotificationRead # Import specific schema classes
 from ..utils.email import send_volunteer_notification, send_donor_confirmation, send_admin_alert
 
 # Placeholder for models
