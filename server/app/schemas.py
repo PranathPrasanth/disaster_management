@@ -26,6 +26,38 @@ class VolunteerStatus(str, Enum):
     INACTIVE = "INACTIVE"
 
 
+# ----------------------------------------------------------------------
+# NOTIFICATION SCHEMAS (NEWLY ADDED TO FIX THE IMPORTERROR)
+# ----------------------------------------------------------------------
+
+class NotificationBase(BaseModel):
+    message: str
+    recipient_user_id: Optional[int] = None
+    recipient_role: Optional[UserRole] = None
+    related_resource: Optional[str] = None # e.g., 'disaster', 'camp', 'donation'
+    related_id: Optional[int] = None
+    is_read: bool = False
+
+class NotificationCreate(NotificationBase):
+    """Schema for creating a new notification."""
+    pass
+
+class NotificationUpdate(BaseModel):
+    is_read: Optional[bool] = None
+    
+class NotificationRead(NotificationBase):
+    """Schema for reading/retrieving a notification."""
+    notification_id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# ----------------------------------------------------------------------
+# END NOTIFICATION SCHEMAS
+# ----------------------------------------------------------------------
+
 # User Schemas
 class UserBase(BaseModel):
     username: str
